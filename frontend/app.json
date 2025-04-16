@@ -15,8 +15,7 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      },
-      "package": "com.kanun.frontend"
+      }
     },
     "web": {
       "bundler": "metro",
@@ -37,6 +36,9 @@
     ],
     "experiments": {
       "typedRoutes": true
+    },
+    "extra":{
+      "API_KEY":"AIzaSyB0rSCE1gEMapd45CmR2s8zzvRocypZQ2I"
     }
   }
 }
