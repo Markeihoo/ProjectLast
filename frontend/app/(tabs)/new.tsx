@@ -348,6 +348,8 @@ const App = () => {
         time: imageData.result.time,
         slip_ref: imageData.result.reference_number
       });
+      deleteImage(id);
+      Alert.alert("บันทึกสําเร็จ", "ข้อมูลถูกบันทึกแล้ว");
     } catch (error) {
       console.error('เกิดข้อผิดพลาดในการบันทึก:', error);
       Alert.alert(
@@ -356,7 +358,6 @@ const App = () => {
       );
     }
   };
-
 
   const onScroll = (event: any) => {
     const contentOffsetX = event.nativeEvent.contentOffset.x;
