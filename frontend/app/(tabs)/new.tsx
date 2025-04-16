@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import {
   View,
   Button,
@@ -14,11 +14,23 @@ import {
 } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import * as MediaLibrary from "expo-media-library";
-import { API_KEY } from '@env';
+
 import {
+  ChevronLeft,
+  ChevronRight,
+  PlusCircle,
+  TrendingUp,
+  CreditCard,
+  DollarSign,
+  ArrowDownCircle,
+  ArrowUpCircle,
+  PieChart,
   ArrowLeft,
 } from "lucide-react-native";
 import { useRouter } from 'expo-router';
+// นำเข้าฟังก์ชั่นจากฐานข้อมูล
+//import { initDatabase, saveTransaction, getAllTransactions } from '../../lib/database';
+import Constants from 'expo-constants';
 interface TransactionInfo {
   transaction_status?: string;
   date?: string;
@@ -53,6 +65,22 @@ const App = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const flatListRef = useRef<FlatList>(null);
   const router = useRouter();
+  const API_KEY = Constants.expoConfig.extra.API_KEY;
+  // เริ่มต้นฐานข้อมูลเมื่อโหลดแอป
+  // useEffect(() => {
+  //   const setupDatabase = async () => {
+  //     try {
+  //       await initDatabase();
+  //       console.log('ฐานข้อมูลถูกเริ่มต้นสำเร็จ');
+  //     } catch (error) {
+  //       console.error('เกิดข้อผิดพลาดในการเริ่มต้นฐานข้อมูล:', error);
+  //       Alert.alert('ข้อผิดพลาด', 'ไม่สามารถเริ่มต้นฐานข้อมูลได้');
+  //     }
+  //   };
+    
+  //   setupDatabase();
+  // }, []);
+  
   const requestPermissions = async () => {
     const { status: mediaStatus } =
       await MediaLibrary.requestPermissionsAsync();
@@ -310,7 +338,8 @@ const App = () => {
     }
   };
 
-  // const saveToDatabase = (id: string) => {
+  // ปรับปรุงฟังก์ชั่นการบันทึกข้อมูลให้ใช้ SQLite
+  // const saveToDatabase = async (id: string) => {
   //   const imageData = imagesData.find((item) => item.id === id);
   //   if (!imageData || !imageData.result) {
   //     Alert.alert(
@@ -319,17 +348,84 @@ const App = () => {
   //     );
   //     return;
   //   }
-
-  //   Alert.alert(
-  //     "แจ้งเตือน",
-  //     "ฟังก์ชันการบันทึกข้อมูลจะถูกเพิ่มโดยคุณในภายหลัง",
-  //     [
-  //       {
-  //         text: "ตกลง",
-  //         onPress: () => console.log("บันทึกข้อมูล:", imageData.result),
-  //       },
-  //     ]
-  //   );
+    
+  //   try {
+  //     // ดึงข้อมูลที่ต้องการบันทึก
+  //     const amount = imageData.result.amount || "ไม่พบข้อมูล";
+  //     const date = imageData.result.date || "ไม่พบข้อมูล";
+      
+  //     // บันทึกลงฐานข้อมูล
+  //     const insertId = await saveTransaction(amount, date);
+      
+  //     Alert.alert(
+  //       "บันทึกสำเร็จ",
+  //       `ข้อมูลถูกบันทึกลงฐานข้อมูลแล้ว (ID: ${insertId})`,
+  //       [
+  //         {
+  //           text: "ตกลง",
+  //           onPress: () => {
+  //             // แสดงข้อมูลใน console เพื่อดูว่าบันทึกสำเร็จ
+  //             console.log('บันทึกข้อมูล:', { amount, date });
+              
+  //             // ทดสอบดึงข้อมูลจากฐานข้อมูล
+  //             getAllTransactions().then(data => {
+  //               console.log('ข้อมูลทั้งหมดในฐานข้อมูล:', data);
+  //             });
+  //           }
+  //         },
+  //       ]
+  //     );
+  //   } catch (error) {
+  //     console.error('เกิดข้อผิดพลาดในการบันทึก:', error);
+  //     Alert.alert(
+  //       "บันทึกไม่สำเร็จ",
+  //       "เกิดข้อผิดพลาดในการบันทึกข้อมูล"
+  //     );
+  //   }
+  // };
+  // const saveToDatabase = async (id: string) => {
+  //   const imageData = imagesData.find((item) => item.id === id);
+  //   if (!imageData || !imageData.result) {
+  //     Alert.alert(
+  //       "ข้อผิดพลาด",
+  //       "ไม่มีข้อมูลให้บันทึก กรุณาวิเคราะห์รูปภาพก่อน"
+  //     );
+  //     return;
+  //   }
+    
+  //   try {
+  //     // ดึงข้อมูลที่ต้องการบันทึก
+  //     const amount = imageData.result.amount || "ไม่พบข้อมูล";
+  //     const date = imageData.result.date || "ไม่พบข้อมูล";
+      
+  //     // บันทึกลงฐานข้อมูล
+  //     const insertId = await saveTransaction(amount, date);
+      
+  //     Alert.alert(
+  //       "บันทึกสำเร็จ",
+  //       `ข้อมูลถูกบันทึกลงฐานข้อมูลแล้ว (ID: ${insertId})`,
+  //       [
+  //         {
+  //           text: "ตกลง",
+  //           onPress: async () => {
+  //             try {
+  //               // ทดสอบดึงข้อมูลจากฐานข้อมูล
+  //               const data = await getAllTransactions();
+  //               console.log('ข้อมูลทั้งหมดในฐานข้อมูล:', data);
+  //             } catch (error) {
+  //               console.error('เกิดข้อผิดพลาดในการดึงข้อมูล:', error);
+  //             }
+  //           }
+  //         },
+  //       ]
+  //     );
+  //   } catch (error) {
+  //     console.error('เกิดข้อผิดพลาดในการบันทึก:', error);
+  //     Alert.alert(
+  //       "บันทึกไม่สำเร็จ",
+  //       "เกิดข้อผิดพลาดในการบันทึกข้อมูล"
+  //     );
+  //   }
   // };
 
   const onScroll = (event: any) => {
@@ -505,13 +601,7 @@ const App = () => {
   };
 
   const backtoHome = () => {
-    // ในสถานการณ์จริง นี่จะนำไปยังหน้าเพิ่มค่าใช้จ่าย
-    router.push('/'); // ไปหน้า new.tsx
-  
-    // Alert.alert(
-    //   'เพิ่มค่าใช้จ่าย',
-    //   'ในแอปพลิเคชันจริง นี่จะนำคุณไปยังหน้าเพิ่มค่าใช้จ่ายใหม่'
-    // );
+    router.push('/');
   };
 
   const renderImageCounter = () => {

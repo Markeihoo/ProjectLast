@@ -3,6 +3,7 @@ import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 export const getAllTranfers = async () => {
+    console.log("getAllTranfers");  
     return await prisma.transfer_slip_info.findMany();
 };
 export const getTranferById = async (id: string) => {
