@@ -27,8 +27,9 @@ import { useRouter } from "expo-router";
 import { useFocusEffect } from '@react-navigation/native';
 import { useCallback } from 'react';
 import customParseFormat from "dayjs/plugin/customParseFormat";
+import axios from "axios";
 dayjs.extend(customParseFormat);
-
+import Constants from 'expo-constants';
 
 
 const { width } = Dimensions.get("window");
@@ -146,37 +147,45 @@ export default function HomeScreen() {
 
   const [currentMonth, setCurrentMonth] = useState(dayjs());
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
-
+  const API_KEY = Constants.expoConfig?.extra?.API_KEY;
+  const API_BACKEND = Constants.expoConfig?.extra?.API_BACKEND;
   const handlePrevMonth = () =>
     setCurrentMonth((prev) => prev.subtract(1, "month"));
   const handleNextMonth = () => setCurrentMonth((prev) => prev.add(1, "month"));
+  console.log("BACKEND:", API_BACKEND);
 
   const router = useRouter();
 
   
 
-  // useFocusEffect(
-  //   useCallback(() => {
-  //     const loadExpenses = async () => {
-  //       try {
-  //         const stored = await getAllTransactions();
-  //         const converted: Expense[] = stored.map((item: any) => ({
-  //           id: item.id,
-  //           date: dayjs(item.date, "DD/MM/YYYY").format("YYYY-MM-DD"),
-  //           amount: parseFloat((item.amount || "0").replace(/[^\d.]/g, '')),
-  //           category: "other",
-  //           description: "",
-  //         }));
-  //         setExpenses(converted);
-  //         console.log("โหลดข้อมูลสําเร็จ:", converted);
-  //       } catch (error) {
-  //         console.error("โหลดข้อมูลไม่สำเร็จ:", error);
-  //       }
-  //     };
+  useFocusEffect(
+    useCallback(() => {
+      const loadExpenses = async () => {
+        try {
+          const response = await axios.get(API_BACKEND + "/api/tranfers");
+          const stored = response.data;
+
+
+          const converted: Expense[] = stored.map((item: any) => ({
+            id: item.id,
+            date: dayjs(item.date).isValid()
+              ? dayjs(item.date).format("YYYY-MM-DD")
+              : dayjs(item.created_at).format("YYYY-MM-DD"),
+            amount: item.amount,
+            category: "other", // fix category เป็นค่าเดียว
+            description: `${item.sender ?? "(ไม่ระบุ)"} → ${item.recipient ?? "(ไม่ระบุ)"}`,
+          }));
+          
+          setExpenses(converted);
+          console.log("โหลดข้อมูลสําเร็จ:", converted);
+        } catch (error) {
+          console.error("โหลดข้อมูลไม่สำเร็จ:", error);
+        }
+      };
   
-  //     loadExpenses();
-  //   }, []) // ต้อง wrap ด้วย useCallback
-  // );
+      loadExpenses();
+    }, []) // ต้อง wrap ด้วย useCallback
+  );
   
 
   const filteredExpenses = useMemo(() => {
