@@ -1,0 +1,16 @@
+{
+    "compilerOptions": {
+      "target": "esnext",
+      "useDefineForClassFields": true,
+      "moduleResolution": "node",
+      "module": "esnext",
+      "jsx": "react-native",
+      "allowJs": true,
+      "esModuleInterop": true,
+      "skipLibCheck": true,
+      "strict": true,
+      "resolveJsonModule": true,
+      "noEmit": true
+    }
+  }
+  
