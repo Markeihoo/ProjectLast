@@ -21,6 +21,8 @@ model transfer_slip_info {
   date        String?
   time        String?
   slip_ref    String?
+  detail      String?
+  typeTranfer String?
   created_at  DateTime @default(now()) 
   updated_at  DateTime @updatedAt  
 }

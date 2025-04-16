@@ -53,93 +53,6 @@ interface Expense {
   description: string;
 }
 
-// ข้อมูลตัวอย่าง (เพิ่มเติมจากเดิม)
-const sampleExpenses: Expense[] = [
-  {
-    id: "1",
-    date: "2025-04-13",
-    amount: 5000,
-    category: "shopping",
-    description: "ช้อปปิ้งเสื้อผ้า",
-  },
-  {
-    id: "2",
-    date: "2025-04-02",
-    amount: 1200,
-    category: "food",
-    description: "ร้านอาหารกับครอบครัว",
-  },
-  {
-    id: "3",
-    date: "2025-04-10",
-    amount: 800,
-    category: "transport",
-    description: "ค่าแท็กซี่",
-  },
-  {
-    id: "4",
-    date: "2025-03-25",
-    amount: 700,
-    category: "bills",
-    description: "ค่าน้ำ ค่าไฟ",
-  },
-  {
-    id: "5",
-    date: "2025-04-15",
-    amount: 350,
-    category: "food",
-    description: "อาหารกลางวัน",
-  },
-  {
-    id: "6",
-    date: "2025-04-20",
-    amount: 1500,
-    category: "entertainment",
-    description: "ตั๋วหนัง",
-  },
-  {
-    id: "7",
-    date: "2025-04-05",
-    amount: 2200,
-    category: "health",
-    description: "ยา",
-  },
-  {
-    id: "8",
-    date: "2025-04-18",
-    amount: 900,
-    category: "bills",
-    description: "ค่าโทรศัพท์",
-  },
-  {
-    id: "9",
-    date: "2025-04-22",
-    amount: 450,
-    category: "transport",
-    description: "ค่าน้ำมัน",
-  },
-  {
-    id: "10",
-    date: "2025-04-30",
-    amount: 3500,
-    category: "shopping",
-    description: "ของใช้ในบ้าน",
-  },
-  {
-    id: "11",
-    date: "2025-03-15",
-    amount: 4200,
-    category: "bills",
-    description: "ค่าเช่า",
-  },
-  {
-    id: "12",
-    date: "2025-03-10",
-    amount: 2800,
-    category: "other",
-    description: "ซ่อมรถ",
-  },
-];
 
 export default function HomeScreen() {
   const [expenses, setExpenses] = useState<Expense[] | null>(null);
@@ -162,7 +75,7 @@ export default function HomeScreen() {
     useCallback(() => {
       const loadExpenses = async () => {
         try {
-          const response = await axios.get(API_BACKEND + "/api/tranfers");
+          const response = await axios.get(API_BACKEND + "/tranfers");
           const stored = response.data;
 
 
@@ -275,7 +188,7 @@ export default function HomeScreen() {
 
   const handleAddExpense = () => {
     // ในสถานการณ์จริง นี่จะนำไปยังหน้าเพิ่มค่าใช้จ่าย
-    router.push("/new"); // ไปหน้า new.tsx
+    router.push("/home"); // ไปหน้า new.tsx
 
     // Alert.alert(
     //   'เพิ่มค่าใช้จ่าย',

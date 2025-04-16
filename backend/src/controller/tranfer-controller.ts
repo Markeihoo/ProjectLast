@@ -9,6 +9,8 @@ const TranferSchema = z.object({
     date: z.string().optional(),
     time: z.string().optional(),
     slip_ref: z.string().optional(),
+    detail: z.string().optional(),
+    typeTranfer: z.string().optional(),
     created_at: z.string().optional(),
     updated_at: z.string().optional(),
 });

@@ -47,6 +47,8 @@ interface TransactionInfo {
   };
   amount?: string;
   raw?: string;
+  detail?: string;
+  typeTranfer?: string;
 }
 
 interface ImageData {
@@ -346,7 +348,9 @@ const App = () => {
         ),
         date: imageData.result.date,
         time: imageData.result.time,
-        slip_ref: imageData.result.reference_number
+        slip_ref: imageData.result.reference_number,
+        detail: imageData.result.detail,
+        typeTranfer: imageData.result.typeTranfer,
       });
       deleteImage(id);
       Alert.alert("บันทึกสําเร็จ", "ข้อมูลถูกบันทึกแล้ว");

@@ -5,7 +5,7 @@ import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect } from 'react';
 import 'react-native-reanimated';
-
+import "./global.css";
 import { useColorScheme } from '@/hooks/useColorScheme';
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
@@ -30,11 +30,11 @@ export default function RootLayout() {
   return (
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
 
-<Stack screenOptions={{ headerShown: false }}>
-  {/* Stack จะโหลดหน้าหลักจาก index.tsx ภายใน (tabs) โดยอัตโนมัติ */}
-  <Stack.Screen name="(tabs)/index" />
-  <Stack.Screen name="+not-found" />
-</Stack>
+      <Stack screenOptions={{ headerShown: false }}>
+        {/* Stack จะโหลดหน้าหลักจาก index.tsx ภายใน (tabs) โดยอัตโนมัติ */}
+        <Stack.Screen name="(tabs)/index" />
+        <Stack.Screen name="+not-found" />
+      </Stack>
 
 
 
