@@ -37,8 +37,9 @@
     "experiments": {
       "typedRoutes": true
     },
-    "extra":{
-      "API_KEY":"AIzaSyB0rSCE1gEMapd45CmR2s8zzvRocypZQ2I"
+    "extra": {
+      "API_KEY": "AIzaSyB0rSCE1gEMapd45CmR2s8zzvRocypZQ2I",
+      "API_BACKEND": "https://wicked-adults-jog.loca.lt/api"
     }
   }
 }

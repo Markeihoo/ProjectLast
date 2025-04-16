@@ -14,6 +14,7 @@ import {
 } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import * as MediaLibrary from "expo-media-library";
+import axios from "axios";
 
 import {
   ChevronLeft,
@@ -62,25 +63,13 @@ const { width } = Dimensions.get("window");
 
 const App = () => {
   const [imagesData, setImagesData] = useState<ImageData[]>([]);
+
   const [currentIndex, setCurrentIndex] = useState(0);
   const flatListRef = useRef<FlatList>(null);
   const router = useRouter();
-  const API_KEY = Constants.expoConfig.extra.API_KEY;
-  // เริ่มต้นฐานข้อมูลเมื่อโหลดแอป
-  // useEffect(() => {
-  //   const setupDatabase = async () => {
-  //     try {
-  //       await initDatabase();
-  //       console.log('ฐานข้อมูลถูกเริ่มต้นสำเร็จ');
-  //     } catch (error) {
-  //       console.error('เกิดข้อผิดพลาดในการเริ่มต้นฐานข้อมูล:', error);
-  //       Alert.alert('ข้อผิดพลาด', 'ไม่สามารถเริ่มต้นฐานข้อมูลได้');
-  //     }
-  //   };
-    
-  //   setupDatabase();
-  // }, []);
-  
+  const API_KEY = Constants.expoConfig?.extra?.API_KEY;
+  const API_BACKEND = Constants.expoConfig?.extra?.API_BACKEND;
+
   const requestPermissions = async () => {
     const { status: mediaStatus } =
       await MediaLibrary.requestPermissionsAsync();
@@ -152,11 +141,11 @@ const App = () => {
           prev.map((item) =>
             item.id === id
               ? {
-                  ...item,
-                  isAnalyzing: false,
-                  error:
-                    "รูปภาพมีขนาดใหญ่เกินไป กรุณาเลือกรูปที่มีขนาดเล็กกว่า",
-                }
+                ...item,
+                isAnalyzing: false,
+                error:
+                  "รูปภาพมีขนาดใหญ่เกินไป กรุณาเลือกรูปที่มีขนาดเล็กกว่า",
+              }
               : item
           )
         );
@@ -232,12 +221,11 @@ const App = () => {
           prev.map((item) =>
             item.id === id
               ? {
-                  ...item,
-                  isAnalyzing: false,
-                  error: `เกิดข้อผิดพลาดจาก AI: ${
-                    data.error.message || "ไม่ทราบสาเหตุ"
+                ...item,
+                isAnalyzing: false,
+                error: `เกิดข้อผิดพลาดจาก AI: ${data.error.message || "ไม่ทราบสาเหตุ"
                   }`,
-                }
+              }
               : item
           )
         );
@@ -273,11 +261,11 @@ const App = () => {
             prev.map((item) =>
               item.id === id
                 ? {
-                    ...item,
-                    result: { raw: jsonText },
-                    isAnalyzing: false,
-                    error: "AI ไม่สามารถวิเคราะห์ข้อมูลในรูปแบบที่ถูกต้อง",
-                  }
+                  ...item,
+                  result: { raw: jsonText },
+                  isAnalyzing: false,
+                  error: "AI ไม่สามารถวิเคราะห์ข้อมูลในรูปแบบที่ถูกต้อง",
+                }
                 : item
             )
           );
@@ -287,11 +275,11 @@ const App = () => {
           prev.map((item) =>
             item.id === id
               ? {
-                  ...item,
-                  isAnalyzing: false,
-                  error:
-                    "AI ไม่สามารถวิเคราะห์ภาพได้ กรุณาลองรูปภาพที่มีความชัดเจนมากขึ้น",
-                }
+                ...item,
+                isAnalyzing: false,
+                error:
+                  "AI ไม่สามารถวิเคราะห์ภาพได้ กรุณาลองรูปภาพที่มีความชัดเจนมากขึ้น",
+              }
               : item
           )
         );
@@ -302,11 +290,11 @@ const App = () => {
         prev.map((item) =>
           item.id === id
             ? {
-                ...item,
-                isAnalyzing: false,
-                error:
-                  "ไม่สามารถเชื่อมต่อกับ AI ได้ กรุณาตรวจสอบการเชื่อมต่ออินเทอร์เน็ต",
-              }
+              ...item,
+              isAnalyzing: false,
+              error:
+                "ไม่สามารถเชื่อมต่อกับ AI ได้ กรุณาตรวจสอบการเชื่อมต่ออินเทอร์เน็ต",
+            }
             : item
         )
       );
@@ -338,95 +326,37 @@ const App = () => {
     }
   };
 
-  // ปรับปรุงฟังก์ชั่นการบันทึกข้อมูลให้ใช้ SQLite
-  // const saveToDatabase = async (id: string) => {
-  //   const imageData = imagesData.find((item) => item.id === id);
-  //   if (!imageData || !imageData.result) {
-  //     Alert.alert(
-  //       "ข้อผิดพลาด",
-  //       "ไม่มีข้อมูลให้บันทึก กรุณาวิเคราะห์รูปภาพก่อน"
-  //     );
-  //     return;
-  //   }
-    
-  //   try {
-  //     // ดึงข้อมูลที่ต้องการบันทึก
-  //     const amount = imageData.result.amount || "ไม่พบข้อมูล";
-  //     const date = imageData.result.date || "ไม่พบข้อมูล";
-      
-  //     // บันทึกลงฐานข้อมูล
-  //     const insertId = await saveTransaction(amount, date);
-      
-  //     Alert.alert(
-  //       "บันทึกสำเร็จ",
-  //       `ข้อมูลถูกบันทึกลงฐานข้อมูลแล้ว (ID: ${insertId})`,
-  //       [
-  //         {
-  //           text: "ตกลง",
-  //           onPress: () => {
-  //             // แสดงข้อมูลใน console เพื่อดูว่าบันทึกสำเร็จ
-  //             console.log('บันทึกข้อมูล:', { amount, date });
-              
-  //             // ทดสอบดึงข้อมูลจากฐานข้อมูล
-  //             getAllTransactions().then(data => {
-  //               console.log('ข้อมูลทั้งหมดในฐานข้อมูล:', data);
-  //             });
-  //           }
-  //         },
-  //       ]
-  //     );
-  //   } catch (error) {
-  //     console.error('เกิดข้อผิดพลาดในการบันทึก:', error);
-  //     Alert.alert(
-  //       "บันทึกไม่สำเร็จ",
-  //       "เกิดข้อผิดพลาดในการบันทึกข้อมูล"
-  //     );
-  //   }
-  // };
-  // const saveToDatabase = async (id: string) => {
-  //   const imageData = imagesData.find((item) => item.id === id);
-  //   if (!imageData || !imageData.result) {
-  //     Alert.alert(
-  //       "ข้อผิดพลาด",
-  //       "ไม่มีข้อมูลให้บันทึก กรุณาวิเคราะห์รูปภาพก่อน"
-  //     );
-  //     return;
-  //   }
-    
-  //   try {
-  //     // ดึงข้อมูลที่ต้องการบันทึก
-  //     const amount = imageData.result.amount || "ไม่พบข้อมูล";
-  //     const date = imageData.result.date || "ไม่พบข้อมูล";
-      
-  //     // บันทึกลงฐานข้อมูล
-  //     const insertId = await saveTransaction(amount, date);
-      
-  //     Alert.alert(
-  //       "บันทึกสำเร็จ",
-  //       `ข้อมูลถูกบันทึกลงฐานข้อมูลแล้ว (ID: ${insertId})`,
-  //       [
-  //         {
-  //           text: "ตกลง",
-  //           onPress: async () => {
-  //             try {
-  //               // ทดสอบดึงข้อมูลจากฐานข้อมูล
-  //               const data = await getAllTransactions();
-  //               console.log('ข้อมูลทั้งหมดในฐานข้อมูล:', data);
-  //             } catch (error) {
-  //               console.error('เกิดข้อผิดพลาดในการดึงข้อมูล:', error);
-  //             }
-  //           }
-  //         },
-  //       ]
-  //     );
-  //   } catch (error) {
-  //     console.error('เกิดข้อผิดพลาดในการบันทึก:', error);
-  //     Alert.alert(
-  //       "บันทึกไม่สำเร็จ",
-  //       "เกิดข้อผิดพลาดในการบันทึกข้อมูล"
-  //     );
-  //   }
-  // };
+  const saveToDatabase = async (id: string) => {
+    const imageData = imagesData.find((item) => item.id === id);
+    if (!imageData || !imageData.result) {
+      Alert.alert(
+        "ข้อผิดพลาด",
+        "ไม่มีข้อมูลให้บันทึก กรุณาวิเคราะห์รูปภาพก่อน"
+      );
+      return;
+    }
+    try {
+
+      const reaponse = await axios.post(API_BACKEND + "/tranfers", {
+        sender: `${imageData.result.sender?.name} (${imageData.result.sender?.account_suffix})`,
+        recipient: `${imageData.result.receiver?.name} (${imageData.result.receiver?.account_suffix})`,
+        amount: parseFloat(
+          (imageData?.result.amount || "0")
+            .replace(/[^0-9.]/g, '')
+        ),
+        date: imageData.result.date,
+        time: imageData.result.time,
+        slip_ref: imageData.result.reference_number
+      });
+    } catch (error) {
+      console.error('เกิดข้อผิดพลาดในการบันทึก:', error);
+      Alert.alert(
+        "บันทึกไม่สำเร็จ",
+        "เกิดข้อผิดพลาดในการบันทึกข้อมูล"
+      );
+    }
+  };
+
 
   const onScroll = (event: any) => {
     const contentOffsetX = event.nativeEvent.contentOffset.x;
@@ -552,7 +482,7 @@ const App = () => {
 
         <TouchableOpacity
           style={styles.saveButton}
-          //onPress={() => saveToDatabase(imageData.id)}
+          onPress={() => saveToDatabase(imageData.id)}
         >
           <Text style={styles.saveButtonText}>เพิ่มข้อมูล</Text>
         </TouchableOpacity>
@@ -693,7 +623,7 @@ const styles = StyleSheet.create({
     width: 40, // ความกว้างพอๆ กับพื้นที่ของ rightPlaceholder
     alignItems: "flex-start",
     left: 15,
-    
+
   },
   rightPlaceholder: {
     width: 40, // ต้องเท่ากับ leftIcon เพื่อบาลานซ์
