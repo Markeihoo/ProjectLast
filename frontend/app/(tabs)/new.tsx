@@ -12,26 +12,19 @@ import {
   Dimensions,
   FlatList,
 } from "react-native";
+import { ButtonMain } from "@/app/components/button";
 import * as ImagePicker from "expo-image-picker";
 import * as MediaLibrary from "expo-media-library";
 import axios from "axios";
-
-import {
-  ChevronLeft,
-  ChevronRight,
-  PlusCircle,
-  TrendingUp,
-  CreditCard,
-  DollarSign,
-  ArrowDownCircle,
-  ArrowUpCircle,
-  PieChart,
-  ArrowLeft,
-} from "lucide-react-native";
+import { ArrowLeft, House } from "lucide-react-native";
 import { useRouter } from 'expo-router';
 // นำเข้าฟังก์ชั่นจากฐานข้อมูล
 //import { initDatabase, saveTransaction, getAllTransactions } from '../../lib/database';
 import Constants from 'expo-constants';
+import { CustomInput } from "@/app/components/customInput";
+import { CustomSelect } from "../components/customSelect";
+import HeaderCustom from "../components/header";
+
 interface TransactionInfo {
   transaction_status?: string;
   date?: string;
@@ -436,6 +429,25 @@ const App = () => {
             {imageData.result.transaction_status || "ไม่พบข้อมูล"}
           </Text>
         </View>
+        <View style={styles.resultRow}>
+          <Text style={styles.resultLabel}>ผู้โอน:</Text>
+          <Text style={styles.resultValue}>
+            {imageData.result.sender?.name || "ไม่พบข้อมูล"}
+            {imageData.result.sender?.account_suffix
+              ? ` (XXXX${imageData.result.sender.account_suffix})`
+              : ""}
+          </Text>
+        </View>
+
+        <View style={styles.resultRow}>
+          <Text style={styles.resultLabel}>ผู้รับ:</Text>
+          <Text style={styles.resultValue}>
+            {imageData.result.receiver?.name || "ไม่พบข้อมูล"}
+            {imageData.result.receiver?.account_suffix
+              ? ` (XXXX${imageData.result.receiver.account_suffix})`
+              : ""}
+          </Text>
+        </View>
 
         <View style={styles.resultRow}>
           <Text style={styles.resultLabel}>วันที่:</Text>
@@ -459,38 +471,41 @@ const App = () => {
         </View>
 
         <View style={styles.resultRow}>
-          <Text style={styles.resultLabel}>ผู้โอน:</Text>
-          <Text style={styles.resultValue}>
-            {imageData.result.sender?.name || "ไม่พบข้อมูล"}
-            {imageData.result.sender?.account_suffix
-              ? ` (XXXX${imageData.result.sender.account_suffix})`
-              : ""}
-          </Text>
-        </View>
-
-        <View style={styles.resultRow}>
-          <Text style={styles.resultLabel}>ผู้รับ:</Text>
-          <Text style={styles.resultValue}>
-            {imageData.result.receiver?.name || "ไม่พบข้อมูล"}
-            {imageData.result.receiver?.account_suffix
-              ? ` (XXXX${imageData.result.receiver.account_suffix})`
-              : ""}
-          </Text>
-        </View>
-
-        <View style={styles.resultRow}>
           <Text style={styles.resultLabel}>จำนวนเงิน:</Text>
           <Text style={[styles.resultValue, styles.amountText]}>
             {imageData.result.amount || "ไม่พบข้อมูล"}
           </Text>
         </View>
 
-        <TouchableOpacity
-          style={styles.saveButton}
+        <View style={styles.resultRow}>
+          <Text style={styles.resultLabel}>ประเภท:</Text>
+          {/* <CustomSelect
+            value=""
+            onChangeText={() => { }}
+            options={[]}
+            placeholder="กรุณาเลือกประเภทค่าใช้จ่าย"
+          /> */}
+        </View>
+
+        <View style={styles.resultRow}>
+          <Text style={styles.resultLabel}>รายละเอียด:</Text>
+          <CustomInput
+            type="textarea"
+            onChangeText={() => { }}
+            value=""
+            className="w-2/3"
+            placeholder="กรุณากรอกรายละเอียด"
+          />
+
+        </View>
+
+
+        <ButtonMain
+          title="เพิ่มข้อมูล"
+          btnColor="submit"
           onPress={() => saveToDatabase(imageData.id)}
-        >
-          <Text style={styles.saveButtonText}>เพิ่มข้อมูล</Text>
-        </TouchableOpacity>
+
+        />
       </View>
     );
   };
@@ -505,6 +520,11 @@ const App = () => {
           >
             <Text style={styles.closeButtonText}>✕</Text>
           </TouchableOpacity>
+          <ButtonMain
+            title="✕"
+            onPress={() => deleteImage(item.id)}
+
+          />
           <Image
             source={{ uri: item.uri }}
             style={styles.image}
@@ -553,23 +573,18 @@ const App = () => {
 
   return (
     <View style={styles.container}>
-      <View style={styles.header}>
-        <TouchableOpacity style={styles.leftIcon}
-          onPress={backtoHome}>
-          <ArrowLeft size={24} color="#fff" />
-        </TouchableOpacity>
-
-        <Text style={styles.title}>อัพโหลดรูปภาพ</Text>
-
-        {/* ช่องว่างด้านขวาไว้บาลานซ์ให้ Text อยู่กลางจริงๆ */}
-        <View style={styles.rightPlaceholder} />
-      </View>
+    <HeaderCustom title="เพิ่มข้อมูลใหม่" />
 
       <ScrollView>
         <View style={styles.buttonContainer}>
-          <TouchableOpacity style={styles.uploadButton} onPress={pickImages}>
-            <Text style={styles.uploadButtonText}>เลือกรูปภาพสลิปโอนเงิน</Text>
-          </TouchableOpacity>
+          <ButtonMain
+            title="บันทึกข้อมูลแบบฟอร์ม"
+            onPress={() => router.push("/addForm")}
+          />
+          <ButtonMain
+            title="เลือกรูปภาพสลิปโอนเงิน"
+            onPress={pickImages}
+          />
         </View>
 
         {imagesData.length > 0 ? (
@@ -593,7 +608,8 @@ const App = () => {
         ) : (
           <View style={styles.emptyContainer}>
             <Text style={styles.emptyText}>
-              ยังไม่มีรูปภาพ กรุณาเลือกรูปภาพสลิปโอนเงิน
+              ยังไม่มีรูปภาพ กรุณาเลือกรูปภาพสลิปโอนเงิน{'\n'}
+              หรือกรอกแบบฟอร์ม
             </Text>
           </View>
         )}
