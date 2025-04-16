@@ -519,12 +519,7 @@ const App = () => {
             onPress={() => deleteImage(item.id)}
           >
             <Text style={styles.closeButtonText}>✕</Text>
-          </TouchableOpacity>
-          <ButtonMain
-            title="✕"
-            onPress={() => deleteImage(item.id)}
-
-          />
+          </TouchableOpacity> 
           <Image
             source={{ uri: item.uri }}
             style={styles.image}
@@ -843,8 +838,8 @@ const styles = StyleSheet.create({
   },
   counterContainer: {
     position: "absolute",
-    top: 105,
-    left: 25,
+    top: 145,
+    left: 30,
     backgroundColor: "rgba(0, 0, 0, 0.5)",
     paddingHorizontal: 10,
     paddingVertical: 5,
