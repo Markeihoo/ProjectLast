@@ -22,8 +22,8 @@ import { useRouter } from "expo-router";
 //import { initDatabase, saveTransaction, getAllTransactions } from '../../lib/database';
 import Constants from "expo-constants";
 import { CustomInput } from "@/app/components/customInput";
-import { CustomSelect } from "../components/customSelect";
-import HeaderCustom from "../components/header";
+import { CustomSelect } from "@/app/components/customSelect";
+import HeaderCustom from "@/app/components/header";
 
 interface TransactionInfo {
   transaction_status?: string;
@@ -601,7 +601,7 @@ const convertBuddhistToChristianYear = (yearStr: string): string => {
           />
         </View>
         <ButtonMain
-          title="เพิ่มข้อมูล"
+          title="เพิ่มรายการ"
           btnColor="submit"
           onPress={() => saveToDatabase(imageData.id)}
         />

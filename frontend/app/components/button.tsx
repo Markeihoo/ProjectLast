@@ -1,8 +1,10 @@
 import { Text, View, TouchableOpacity } from "react-native";
 import { Feather } from '@expo/vector-icons';
+import { ReactNode } from "react";
 
 type ButtonProps = {
-    title: string;
+    title?: string;
+    children?: ReactNode;
     btnColor?: "primary" | "secondary" | "danger" | "submit";
     onPress: () => void;
     btnSize?: "small" | "medium" | "large" | "full" | "menu";
@@ -12,6 +14,7 @@ type ButtonProps = {
 
 export const ButtonMain = ({
     title,
+    children,
     btnColor = "primary",
     onPress,
     btnSize = "medium",
@@ -47,8 +50,12 @@ export const ButtonMain = ({
             onPress={onPress}
         >
             <View className="flex-row items-center justify-between">
-                <View className="flex-1 items-center">
-                    <Text className="text-white font-bold text-center">{title}</Text>
+                <View className="flex-1 items-center flex-row justify-center">
+                    {children ? (
+                        children
+                    ) : (
+                        <Text className="text-white font-bold text-center">{title}</Text>
+                    )}
                 </View>
                 {arrow && <Feather name="chevron-right" size={20} color="white" />}
             </View>

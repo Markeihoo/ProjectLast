@@ -1,6 +1,6 @@
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import { router } from "expo-router";
-import { House,Plus } from "lucide-react-native";
+import { ArrowBigLeft, ArrowLeft, House, Plus } from "lucide-react-native";
 
 interface Props {
     title: string;
@@ -13,16 +13,22 @@ export default function HeaderCustom({ title }: Props) {
     const backtonew = () => {
         router.push('/new');
     };
+    const back = () => {
+        router.back();
+    }
 
     return (
         <View style={styles.header}>
-            <TouchableOpacity style={styles.leftIcon} onPress={backtoHome}>
-                <View className="flex-row">
+            <View className="flex-row space-x-8">
+                <TouchableOpacity onPress={backtoHome}>
                     <House size={24} color="#fff" />
-                </View>
-            </TouchableOpacity>
-            <Text style={styles.title}>{title}</Text>
-            
+                </TouchableOpacity>
+                <TouchableOpacity onPress={back}>
+                    <ArrowLeft size={24} color="#fff" style={{ marginLeft: 10 }} />
+                </TouchableOpacity>
+            </View>
+            <Text style={styles.title} className="ml-[-10px]">{title}</Text>
+
             <TouchableOpacity style={styles.leftIcon} onPress={backtonew}>
                 <View className="flex-row">
                     <Plus size={24} color="#fff" />

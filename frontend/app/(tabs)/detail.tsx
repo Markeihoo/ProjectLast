@@ -1,60 +1,95 @@
-import { Text, View, ScrollView, TouchableOpacity } from "react-native";
+import { Text, View, ScrollView, ActivityIndicator } from "react-native";
 import HeaderCustom from "../components/header";
 import PaginationCustom from "../components/pagination";
 import { ItemCardMain } from "../components/itemCard";
-import { ChevronLeft, ChevronRight, PlusCircle, TrendingUp, CreditCard, DollarSign, ArrowDownCircle, ArrowUpCircle, PieChart, ArrowLeft, } from "lucide-react-native";
-import { useState } from 'react';
-import { router } from "expo-router";
-import { ButtonMain } from "../components/button";
+import { useState, useEffect } from 'react';
+import { useLocalSearchParams } from "expo-router";
+import Constants from 'expo-constants';
+import dayjs from "dayjs";
+import "dayjs/locale/th";
+import buddhistEra from "dayjs/plugin/buddhistEra";
+import localizedFormat from "dayjs/plugin/localizedFormat";
 
-export default function detail() {
+dayjs.locale("th");
+dayjs.extend(buddhistEra);
+dayjs.extend(localizedFormat);
+type TransferItem = {
+    id: string;
+    amount: number;
+    sender: string;
+    recipient: string;
+    date: string;
+    time: string;
+    slip_ref: string;
+    detail: string;
+    typeTranfer: string | null;
+    created_at: string;
+    updated_at: string;
+};
 
-    const [page, setPage] = useState(1);
-    const totalPages = 4;
+export default function DetailScreen() {
+    const { date, displayDate } = useLocalSearchParams<{ date: string; displayDate: string }>();
+    const API_BACKEND = Constants.expoConfig?.extra?.API_BACKEND;
 
-    const handlePrev = () => {
-        if (page > 1) setPage(page - 1);
-    };
+    const [data, setData] = useState<TransferItem[]>([]);
+    const [loading, setLoading] = useState(true);
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                setLoading(true);
+                const res = await fetch(`${API_BACKEND}/tranfersByDate?date=${date}`);
+                const json = await res.json();
+                setData(json);
+            } catch (err) {
+                console.error("Error fetching data:", err);
+            } finally {
+                setLoading(false);
+            }
+        };
 
-    const handleNext = () => {
-        if (page < totalPages) setPage(page + 1);
-    };
+        if (date) fetchData();
+    }, [date]);
+
+    const totalAmount = (data ?? []).reduce((sum, item) => sum + (item.amount ?? 0), 0);
 
     return (
         <View style={{ flex: 1 }}>
-            <HeaderCustom title={`รายละเอียดการใช้จ่าย\nวันที่ 17/4/68`} />
-            <View className="flex-row justify-between bg-blue-100 p-4 ">
-                    <Text >ยอดใช้จ่ายวันที่......</Text>
-                    <Text >฿ กี่บาทท</Text>
-
-                    {/* วันที่ใช้จ่ายสูงสุด */}
-                    {/* {maxExpenseDay && ( */}
-                    {/* )} */}
+            <HeaderCustom title={`รายละเอียดการใช้จ่าย\n${dayjs(date).format("D MMM BBBB")}`} />
+            <View className="flex-row justify-between items-center bg-blue-100 px-6 py-4 rounded-xl shadow-sm mb-4">
+                <View>
+                    <Text className="text-base">ยอดใช้จ่ายวันที่</Text>
+                    <Text className="text-lg font-semibold text-blue-800">{dayjs(date).format("D MMM BBBB")}</Text>
                 </View>
-                <Text className="text-base mb-4">แสดงรายการทั้งหมดของเดือนนั้นตาม created_at วันเดียว...เท่านั้น </Text>
+                <View className="items-end">
+                    <Text className="text-base text-gray-700">รวมทั้งหมด</Text>
+                    <Text className="text-xl font-bold text-green-600">
+                        💰 {totalAmount.toLocaleString(undefined, { minimumFractionDigits: 2 })}
+                    </Text>
+                </View>
+            </View>
+
             <ScrollView contentContainerStyle={{ paddingHorizontal: 16, paddingBottom: 30 }}>
-                {Array.from({ length: 4 }).map((_, index) => (
-                    <ItemCardMain
-                        key={index}
-                        amount={10}
-                        typeTranfer="โอนเงิน"
-                        date="2023-08-01"
-                        time="10:00"
-                        sender="John Doe"
-                        recipient="Jane Smith"
-                        detail="รายละเอียดเพิ่มเติม"
-                        titleBtn="ลบ"
-                        btnColor="danger"
-                        onPress={() => { }}
-                    />
-                ))}
+                {loading ? (
+                    <ActivityIndicator size="large" color="#0000ff" />
+                ) : (
+                    data.map((item: any) => (
+                        <ItemCardMain
+                            key={item.id}
+                            amount={item.amount || 0}
+                            typeTranfer={item.typeTranfer ?? ""}
+                            date={item.date}
+                            time={item.time}
+                            sender={item.sender ?? "ไม่ระบุ"}
+                            recipient={item.recipient ?? "ไม่ระบุ"}
+                            detail={item.detail || "ไม่มีรายละเอียด"}
+                            titleBtn="ลบ"
+                            btnColor="danger"
+                            onPress={() => { }}
+                        />
+                    ))
+                )}
             </ScrollView>
-            <PaginationCustom
-                page={page}
-                totalPages={totalPages}
-                handlePrev={handlePrev}
-                handleNext={handleNext}
-            />
+
         </View>
     );
 }

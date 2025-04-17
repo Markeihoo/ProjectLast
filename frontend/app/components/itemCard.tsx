@@ -1,7 +1,14 @@
 import { Text, View, TouchableOpacity } from 'react-native';
 import { ButtonMain } from '@/app/components/button';
 import { Edit, Trash2 } from 'lucide-react-native';
+import dayjs from "dayjs";
+import "dayjs/locale/th";
+import buddhistEra from "dayjs/plugin/buddhistEra";
+import localizedFormat from "dayjs/plugin/localizedFormat";
 
+dayjs.locale("th");
+dayjs.extend(buddhistEra);
+dayjs.extend(localizedFormat);
 type ProductItemCardProps = {
     amount: number;
     typeTranfer: string;
@@ -14,7 +21,7 @@ type ProductItemCardProps = {
     titleBtn: string;
     btnColor?: "primary" | "secondary" | "danger";
     btnSize?: "small" | "medium" | "large";
-    onPress: () => void;
+    onPress?: () => void;
     onEdit?: () => void;
     onDelete?: () => void;
 };
@@ -37,7 +44,7 @@ export const ItemCardMain = ({
 }: ProductItemCardProps) => {
 
     return (
-        <View className="p-4 bg-white rounded-xl mb-4  relative border border-gray-300">
+        <View className="p-2 bg-white rounded-xl mb-4  relative border border-gray-300">
             <View style={{ position: 'absolute', top: 10, right: 15, flexDirection: 'row', gap: 15 }}>
                 <TouchableOpacity onPress={onEdit}>
                     <Edit size={24} color="#4a86e8" />
@@ -47,18 +54,18 @@ export const ItemCardMain = ({
                 </TouchableOpacity>
             </View>
 
-            <Text className="text-[20px] font-bold text-black">
-                จำนวนเงิน : {amount ?? 0}
+            <Text className="text-[20px] font-bold text-black py-2">
+                🪙 {amount.toFixed(2).replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')}{''}
                 {typeTranfer && typeTranfer !== '' && typeTranfer !== null && (
                     <Text className="text-[16px] text-gray-400">  ({typeTranfer})</Text>
                 )}
             </Text>
 
 
-            <Text className="text-[16px]">วันที่: {date}-{time} </Text>
-            <Text className="text-[16px]">ผู้โอน : {sender ?? 'ไม่ระบุ'}</Text>
-            <Text className="text-[16px]">ผู้รับ : {recipient ?? 'ไม่ระบุ'}</Text>
-            <Text className="text-[16px]">รายละเอียด : {detail ?? 'ไม่ระบุ'}</Text>
+            <Text className="text-[16px] text-gray-500">วันที่: {dayjs(date).format('DD MMM BB')} {time} </Text>
+            <Text className="text-[16px] text-gray-500">ผู้โอน : {sender ?? 'ไม่ระบุ'}</Text>
+            <Text className="text-[16px] text-gray-500">ผู้รับ : {recipient ?? 'ไม่ระบุ'}</Text>
+            <Text className="text-[16px] text-gray-500">รายละเอียด : {detail ?? '-'}</Text>
 
         </View>
     );
