@@ -17,10 +17,10 @@ import * as ImagePicker from "expo-image-picker";
 import * as MediaLibrary from "expo-media-library";
 import axios from "axios";
 import { ArrowLeft, House } from "lucide-react-native";
-import { useRouter } from 'expo-router';
+import { useRouter } from "expo-router";
 // นำเข้าฟังก์ชั่นจากฐานข้อมูล
 //import { initDatabase, saveTransaction, getAllTransactions } from '../../lib/database';
-import Constants from 'expo-constants';
+import Constants from "expo-constants";
 import { CustomInput } from "@/app/components/customInput";
 import { CustomSelect } from "../components/customSelect";
 import HeaderCustom from "../components/header";
@@ -41,7 +41,7 @@ interface TransactionInfo {
   amount?: string;
   raw?: string;
   detail?: string;
-  typeTranfer?: string;
+  typeTranferMap?: string;
 }
 
 interface ImageData {
@@ -64,6 +64,18 @@ const App = () => {
   const router = useRouter();
   const API_KEY = Constants.expoConfig?.extra?.API_KEY;
   const API_BACKEND = Constants.expoConfig?.extra?.API_BACKEND;
+
+  const categories = [
+    "ค่าอาหาร",
+    "ค่ายา",
+    "ค่าท่องเที่ยว",
+    "ค่าน้ำค่าไฟ",
+    "อื่นๆ",
+  ];
+  const [typeTransferMap, setTypeTransferMap] = useState<{
+    [key: string]: string;
+  }>({});
+  const [detailMap, setDetailMap] = useState<{ [key: string]: string }>({});
 
   const requestPermissions = async () => {
     const { status: mediaStatus } =
@@ -136,11 +148,11 @@ const App = () => {
           prev.map((item) =>
             item.id === id
               ? {
-                ...item,
-                isAnalyzing: false,
-                error:
-                  "รูปภาพมีขนาดใหญ่เกินไป กรุณาเลือกรูปที่มีขนาดเล็กกว่า",
-              }
+                  ...item,
+                  isAnalyzing: false,
+                  error:
+                    "รูปภาพมีขนาดใหญ่เกินไป กรุณาเลือกรูปที่มีขนาดเล็กกว่า",
+                }
               : item
           )
         );
@@ -216,11 +228,12 @@ const App = () => {
           prev.map((item) =>
             item.id === id
               ? {
-                ...item,
-                isAnalyzing: false,
-                error: `เกิดข้อผิดพลาดจาก AI: ${data.error.message || "ไม่ทราบสาเหตุ"
+                  ...item,
+                  isAnalyzing: false,
+                  error: `เกิดข้อผิดพลาดจาก AI: ${
+                    data.error.message || "ไม่ทราบสาเหตุ"
                   }`,
-              }
+                }
               : item
           )
         );
@@ -256,11 +269,11 @@ const App = () => {
             prev.map((item) =>
               item.id === id
                 ? {
-                  ...item,
-                  result: { raw: jsonText },
-                  isAnalyzing: false,
-                  error: "AI ไม่สามารถวิเคราะห์ข้อมูลในรูปแบบที่ถูกต้อง",
-                }
+                    ...item,
+                    result: { raw: jsonText },
+                    isAnalyzing: false,
+                    error: "AI ไม่สามารถวิเคราะห์ข้อมูลในรูปแบบที่ถูกต้อง",
+                  }
                 : item
             )
           );
@@ -270,11 +283,11 @@ const App = () => {
           prev.map((item) =>
             item.id === id
               ? {
-                ...item,
-                isAnalyzing: false,
-                error:
-                  "AI ไม่สามารถวิเคราะห์ภาพได้ กรุณาลองรูปภาพที่มีความชัดเจนมากขึ้น",
-              }
+                  ...item,
+                  isAnalyzing: false,
+                  error:
+                    "AI ไม่สามารถวิเคราะห์ภาพได้ กรุณาลองรูปภาพที่มีความชัดเจนมากขึ้น",
+                }
               : item
           )
         );
@@ -285,11 +298,11 @@ const App = () => {
         prev.map((item) =>
           item.id === id
             ? {
-              ...item,
-              isAnalyzing: false,
-              error:
-                "ไม่สามารถเชื่อมต่อกับ AI ได้ กรุณาตรวจสอบการเชื่อมต่ออินเทอร์เน็ต",
-            }
+                ...item,
+                isAnalyzing: false,
+                error:
+                  "ไม่สามารถเชื่อมต่อกับ AI ได้ กรุณาตรวจสอบการเชื่อมต่ออินเทอร์เน็ต",
+              }
             : item
         )
       );
@@ -320,6 +333,72 @@ const App = () => {
       Alert.alert("ข้อผิดพลาด", "ไม่สามารถวิเคราะห์รูปภาพซ้ำได้");
     }
   };
+  // สร้างฟังก์ชัน format วันที่
+// สร้างฟังก์ชัน format วันที่ และแปลงปี พ.ศ. เป็น ค.ศ.
+const formatDate = (dateStr: string | undefined): string => {
+  if (!dateStr) return "";
+  
+  // ตรวจสอบรูปแบบวันที่ที่เป็นไปได้
+  
+  // รูปแบบ DD-MM-YYYY หรือ DD/MM/YYYY
+  const formatPattern1 = /^(\d{1,2})[/-](\d{1,2})[/-](\d{4})$/;
+  
+  // รูปแบบ DD MMM YYYY (เช่น 13 เม.ย. 2568)
+  const formatPattern2 = /^(\d{1,2})\s+[^\d]+\s+(\d{4})$/;
+  
+  let day, month, year;
+  
+  if (formatPattern1.test(dateStr)) {
+    const parts = dateStr.split(/[/-]/);
+    day = parts[0].padStart(2, '0');
+    month = parts[1].padStart(2, '0');
+    year = convertBuddhistToChristianYear(parts[2]);
+    return `${year}-${month}-${day}`;
+  } 
+  else if (formatPattern2.test(dateStr)) {
+    // แปลงเดือนในรูปแบบข้อความภาษาไทย
+    const thaiMonths = {
+      'ม.ค.': '01', 'ก.พ.': '02', 'มี.ค.': '03', 'เม.ย.': '04',
+      'พ.ค.': '05', 'มิ.ย.': '06', 'ก.ค.': '07', 'ส.ค.': '08',
+      'ก.ย.': '09', 'ต.ค.': '10', 'พ.ย.': '11', 'ธ.ค.': '12'
+    };
+    
+    const parts = dateStr.split(/\s+/);
+    day = parts[0].padStart(2, '0');
+    
+    // ค้นหาเดือนในข้อความ
+    let monthText = parts[1];
+    month = '01'; // ค่าเริ่มต้น
+    
+    // ค้นหาเดือนที่ตรงกับข้อความ
+    for (const [thaiMonth, monthNum] of Object.entries(thaiMonths)) {
+      if (monthText.includes(thaiMonth)) {
+        month = monthNum;
+        break;
+      }
+    }
+    
+    year = convertBuddhistToChristianYear(parts[2]);
+    return `${year}-${month}-${day}`;
+  } 
+  else {
+    // กรณีอื่นๆ ให้ส่งค่าเดิมกลับไป
+    return dateStr;
+  }
+};
+
+// ฟังก์ชันแปลงปี พ.ศ. เป็น ค.ศ.
+const convertBuddhistToChristianYear = (yearStr: string): string => {
+  const year = parseInt(yearStr, 10);
+  
+  // ตรวจสอบว่าเป็นปี พ.ศ. หรือไม่ (มากกว่า 2500)
+  if (year > 2500) {
+    return (year - 543).toString();
+  }
+  
+  // ถ้าเป็นปี ค.ศ. อยู่แล้ว ส่งค่าเดิมกลับไป
+  return yearStr;
+};
 
   const saveToDatabase = async (id: string) => {
     const imageData = imagesData.find((item) => item.id === id);
@@ -331,7 +410,6 @@ const App = () => {
       return;
     }
     try {
-
       const reaponse = await axios.post(API_BACKEND + "/tranfers", {
         sender: `${imageData.result.sender?.name} (${imageData.result.sender?.account_suffix})`,
         recipient: `${imageData.result.receiver?.name} (${imageData.result.receiver?.account_suffix})`,
@@ -339,20 +417,17 @@ const App = () => {
           (imageData?.result.amount || "0")
             .replace(/[^0-9.]/g, '')
         ),
-        date: imageData.result.date,
+        date: formatDate(imageData.result.date), // ใช้ฟังก์ชัน formatDate ตรงนี้
         time: imageData.result.time,
         slip_ref: imageData.result.reference_number,
-        detail: imageData.result.detail,
-        typeTranfer: imageData.result.typeTranfer,
+        detail: detailMap[imageData.id] || "",
+        typeTranfer: typeTransferMap[imageData.id], // แก้ไขตรงนี้
       });
       deleteImage(id);
       Alert.alert("บันทึกสําเร็จ", "ข้อมูลถูกบันทึกแล้ว");
     } catch (error) {
-      console.error('เกิดข้อผิดพลาดในการบันทึก:', error);
-      Alert.alert(
-        "บันทึกไม่สำเร็จ",
-        "เกิดข้อผิดพลาดในการบันทึกข้อมูล"
-      );
+      console.error("เกิดข้อผิดพลาดในการบันทึก:", error);
+      Alert.alert("บันทึกไม่สำเร็จ", "เกิดข้อผิดพลาดในการบันทึกข้อมูล");
     }
   };
 
@@ -479,32 +554,56 @@ const App = () => {
 
         <View style={styles.resultRow}>
           <Text style={styles.resultLabel}>ประเภท:</Text>
-          {/* <CustomSelect
-            value=""
-            onChangeText={() => { }}
-            options={[]}
-            placeholder="กรุณาเลือกประเภทค่าใช้จ่าย"
-          /> */}
+
+          <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+            {categories.map((category) => (
+              <TouchableOpacity
+                key={category}
+                className={`px-4 py-2 mr-2 rounded-full ${
+                  typeTransferMap[imageData.id] === category
+                    ? "bg-blue-500"
+                    : "bg-gray-300"
+                }`}
+                onPress={() =>
+                  setTypeTransferMap((prev) => ({
+                    ...prev,
+                    [imageData.id]: category,
+                  }))
+                }
+              >
+                <Text
+                  className={`${
+                    typeTransferMap[imageData.id] === category
+                      ? "text-white"
+                      : "text-black"
+                  }`}
+                >
+                  {category}
+                </Text>
+              </TouchableOpacity>
+            ))}
+          </ScrollView>
         </View>
 
         <View style={styles.resultRow}>
           <Text style={styles.resultLabel}>รายละเอียด:</Text>
           <CustomInput
             type="textarea"
-            onChangeText={() => { }}
-            value=""
+            onChangeText={(text) =>
+              setDetailMap((prev) => ({
+                ...prev,
+                [imageData.id]: text,
+              }))
+            }
+            value={detailMap[imageData.id] || ""}
             className="w-2/3"
             placeholder="กรุณากรอกรายละเอียด"
           />
-
         </View>
-
-
         <ButtonMain
           title="เพิ่มข้อมูล"
           btnColor="submit"
           onPress={() => saveToDatabase(imageData.id)}
-
         />
       </View>
     );
@@ -519,7 +618,7 @@ const App = () => {
             onPress={() => deleteImage(item.id)}
           >
             <Text style={styles.closeButtonText}>✕</Text>
-          </TouchableOpacity> 
+          </TouchableOpacity>
           <Image
             source={{ uri: item.uri }}
             style={styles.image}
@@ -551,7 +650,7 @@ const App = () => {
   };
 
   const backtoHome = () => {
-    router.push('/');
+    router.push("/");
   };
 
   const renderImageCounter = () => {
@@ -568,7 +667,7 @@ const App = () => {
 
   return (
     <View style={styles.container}>
-    <HeaderCustom title="เพิ่มข้อมูลใหม่" />
+      <HeaderCustom title="เพิ่มข้อมูลใหม่" />
 
       <ScrollView>
         <View style={styles.buttonContainer}>
@@ -576,10 +675,7 @@ const App = () => {
             title="บันทึกข้อมูลแบบฟอร์ม"
             onPress={() => router.push("/addForm")}
           />
-          <ButtonMain
-            title="เลือกรูปภาพสลิปโอนเงิน"
-            onPress={pickImages}
-          />
+          <ButtonMain title="เลือกรูปภาพสลิปโอนเงิน" onPress={pickImages} />
         </View>
 
         {imagesData.length > 0 ? (
@@ -603,7 +699,7 @@ const App = () => {
         ) : (
           <View style={styles.emptyContainer}>
             <Text style={styles.emptyText}>
-              ยังไม่มีรูปภาพ กรุณาเลือกรูปภาพสลิปโอนเงิน{'\n'}
+              ยังไม่มีรูปภาพ กรุณาเลือกรูปภาพสลิปโอนเงิน{"\n"}
               หรือกรอกแบบฟอร์ม
             </Text>
           </View>
@@ -639,7 +735,6 @@ const styles = StyleSheet.create({
     width: 40, // ความกว้างพอๆ กับพื้นที่ของ rightPlaceholder
     alignItems: "flex-start",
     left: 15,
-
   },
   rightPlaceholder: {
     width: 40, // ต้องเท่ากับ leftIcon เพื่อบาลานซ์
