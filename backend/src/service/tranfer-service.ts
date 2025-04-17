@@ -52,7 +52,6 @@ export const getTranfersByMonth = async (month: string) => {
             typeTranfer: true,
         },
     });
-    // ถ้าไม่มียอดเลย
     if (data.length === 0) {
         return {
             totalMonthAmount: 0,

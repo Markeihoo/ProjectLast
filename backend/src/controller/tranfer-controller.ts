@@ -99,10 +99,10 @@ export const getTranfersByOneMonth = async (req: Request, res: Response): Promis
         const formattedMonth = `${year}-${month.padStart(2, "0")}`;
         const result = await TranferService.getTranfersByMonth(formattedMonth);
 
-        if (!result.dailySummary || Object.keys(result.dailySummary).length === 0) {
-            res.status(404).json({ message: "No transfer data found for this month" });
-            return;
-        }
+        // if (!result.dailySummary || Object.keys(result.dailySummary).length === 0) {
+        //     res.status(404).json({ message: "No transfer data found for this month" });
+        //     return;
+        // }
 
         res.json(result); // ✅ แค่ไม่ต้องใช้ return ที่นี่
     } catch (error) {
