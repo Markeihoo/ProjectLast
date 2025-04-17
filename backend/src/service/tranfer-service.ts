@@ -49,9 +49,17 @@ export const getTranfersByMonth = async (month: string) => {
         select: {
             date: true,
             amount: true,
+            typeTranfer: true,
         },
     });
-
+    // ถ้าไม่มียอดเลย
+    if (data.length === 0) {
+        return {
+            totalMonthAmount: 0,
+            dailySummary: {},
+            typeSummary: {},
+        };
+    }
     const totalMonthAmount = data.reduce((sum, item) => sum + item.amount, 0);
 
     const dailySummary: { [date: string]: number } = {};
@@ -60,10 +68,21 @@ export const getTranfersByMonth = async (month: string) => {
             dailySummary[item.date] = (dailySummary[item.date] || 0) + item.amount;
         }
     });
+    const typeSummary: Record<string, { count: number, totalAmount: number }> = {};
+    for (const item of data) {
+        const type = item.typeTranfer || "อื่นๆ";
+        if (!typeSummary[type]) {
+            typeSummary[type] = { count: 1, totalAmount: item.amount };
+        } else {
+            typeSummary[type].count++;
+            typeSummary[type].totalAmount += item.amount;
+        }
+    }
 
     return {
         totalMonthAmount,
         dailySummary,
+        typeSummary
     };
 };
 

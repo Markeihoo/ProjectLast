@@ -50,6 +50,7 @@ type CustomInputProps = {
   placeholder: string;
   type?: string; // 'text' | 'number' | 'textarea' | 'date'
   className?: string;
+  keyboardType?: "default" | "numeric" | "email-address" | "phone-pad";
 };
 
 export const CustomInput = ({
@@ -59,6 +60,7 @@ export const CustomInput = ({
   placeholder,
   type,
   className,
+  keyboardType,
 }: CustomInputProps) => {
   const isTextarea = type === "textarea";
   const isDate = type === "date";

@@ -22,7 +22,7 @@ import { useRouter } from "expo-router";
 //import { initDatabase, saveTransaction, getAllTransactions } from '../../lib/database';
 import Constants from "expo-constants";
 import { CustomInput } from "@/app/components/customInput";
-import { CustomSelect } from "@/app/components/customSelect";
+import CustomSelect from "@/app/components/customSelect";
 import HeaderCustom from "@/app/components/header";
 
 interface TransactionInfo {
@@ -148,11 +148,11 @@ const App = () => {
           prev.map((item) =>
             item.id === id
               ? {
-                  ...item,
-                  isAnalyzing: false,
-                  error:
-                    "รูปภาพมีขนาดใหญ่เกินไป กรุณาเลือกรูปที่มีขนาดเล็กกว่า",
-                }
+                ...item,
+                isAnalyzing: false,
+                error:
+                  "รูปภาพมีขนาดใหญ่เกินไป กรุณาเลือกรูปที่มีขนาดเล็กกว่า",
+              }
               : item
           )
         );
@@ -228,12 +228,11 @@ const App = () => {
           prev.map((item) =>
             item.id === id
               ? {
-                  ...item,
-                  isAnalyzing: false,
-                  error: `เกิดข้อผิดพลาดจาก AI: ${
-                    data.error.message || "ไม่ทราบสาเหตุ"
+                ...item,
+                isAnalyzing: false,
+                error: `เกิดข้อผิดพลาดจาก AI: ${data.error.message || "ไม่ทราบสาเหตุ"
                   }`,
-                }
+              }
               : item
           )
         );
@@ -269,11 +268,11 @@ const App = () => {
             prev.map((item) =>
               item.id === id
                 ? {
-                    ...item,
-                    result: { raw: jsonText },
-                    isAnalyzing: false,
-                    error: "AI ไม่สามารถวิเคราะห์ข้อมูลในรูปแบบที่ถูกต้อง",
-                  }
+                  ...item,
+                  result: { raw: jsonText },
+                  isAnalyzing: false,
+                  error: "AI ไม่สามารถวิเคราะห์ข้อมูลในรูปแบบที่ถูกต้อง",
+                }
                 : item
             )
           );
@@ -283,11 +282,11 @@ const App = () => {
           prev.map((item) =>
             item.id === id
               ? {
-                  ...item,
-                  isAnalyzing: false,
-                  error:
-                    "AI ไม่สามารถวิเคราะห์ภาพได้ กรุณาลองรูปภาพที่มีความชัดเจนมากขึ้น",
-                }
+                ...item,
+                isAnalyzing: false,
+                error:
+                  "AI ไม่สามารถวิเคราะห์ภาพได้ กรุณาลองรูปภาพที่มีความชัดเจนมากขึ้น",
+              }
               : item
           )
         );
@@ -298,11 +297,11 @@ const App = () => {
         prev.map((item) =>
           item.id === id
             ? {
-                ...item,
-                isAnalyzing: false,
-                error:
-                  "ไม่สามารถเชื่อมต่อกับ AI ได้ กรุณาตรวจสอบการเชื่อมต่ออินเทอร์เน็ต",
-              }
+              ...item,
+              isAnalyzing: false,
+              error:
+                "ไม่สามารถเชื่อมต่อกับ AI ได้ กรุณาตรวจสอบการเชื่อมต่ออินเทอร์เน็ต",
+            }
             : item
         )
       );
@@ -334,71 +333,71 @@ const App = () => {
     }
   };
   // สร้างฟังก์ชัน format วันที่
-// สร้างฟังก์ชัน format วันที่ และแปลงปี พ.ศ. เป็น ค.ศ.
-const formatDate = (dateStr: string | undefined): string => {
-  if (!dateStr) return "";
-  
-  // ตรวจสอบรูปแบบวันที่ที่เป็นไปได้
-  
-  // รูปแบบ DD-MM-YYYY หรือ DD/MM/YYYY
-  const formatPattern1 = /^(\d{1,2})[/-](\d{1,2})[/-](\d{4})$/;
-  
-  // รูปแบบ DD MMM YYYY (เช่น 13 เม.ย. 2568)
-  const formatPattern2 = /^(\d{1,2})\s+[^\d]+\s+(\d{4})$/;
-  
-  let day, month, year;
-  
-  if (formatPattern1.test(dateStr)) {
-    const parts = dateStr.split(/[/-]/);
-    day = parts[0].padStart(2, '0');
-    month = parts[1].padStart(2, '0');
-    year = convertBuddhistToChristianYear(parts[2]);
-    return `${year}-${month}-${day}`;
-  } 
-  else if (formatPattern2.test(dateStr)) {
-    // แปลงเดือนในรูปแบบข้อความภาษาไทย
-    const thaiMonths = {
-      'ม.ค.': '01', 'ก.พ.': '02', 'มี.ค.': '03', 'เม.ย.': '04',
-      'พ.ค.': '05', 'มิ.ย.': '06', 'ก.ค.': '07', 'ส.ค.': '08',
-      'ก.ย.': '09', 'ต.ค.': '10', 'พ.ย.': '11', 'ธ.ค.': '12'
-    };
-    
-    const parts = dateStr.split(/\s+/);
-    day = parts[0].padStart(2, '0');
-    
-    // ค้นหาเดือนในข้อความ
-    let monthText = parts[1];
-    month = '01'; // ค่าเริ่มต้น
-    
-    // ค้นหาเดือนที่ตรงกับข้อความ
-    for (const [thaiMonth, monthNum] of Object.entries(thaiMonths)) {
-      if (monthText.includes(thaiMonth)) {
-        month = monthNum;
-        break;
-      }
-    }
-    
-    year = convertBuddhistToChristianYear(parts[2]);
-    return `${year}-${month}-${day}`;
-  } 
-  else {
-    // กรณีอื่นๆ ให้ส่งค่าเดิมกลับไป
-    return dateStr;
-  }
-};
+  // สร้างฟังก์ชัน format วันที่ และแปลงปี พ.ศ. เป็น ค.ศ.
+  const formatDate = (dateStr: string | undefined): string => {
+    if (!dateStr) return "";
 
-// ฟังก์ชันแปลงปี พ.ศ. เป็น ค.ศ.
-const convertBuddhistToChristianYear = (yearStr: string): string => {
-  const year = parseInt(yearStr, 10);
-  
-  // ตรวจสอบว่าเป็นปี พ.ศ. หรือไม่ (มากกว่า 2500)
-  if (year > 2500) {
-    return (year - 543).toString();
-  }
-  
-  // ถ้าเป็นปี ค.ศ. อยู่แล้ว ส่งค่าเดิมกลับไป
-  return yearStr;
-};
+    // ตรวจสอบรูปแบบวันที่ที่เป็นไปได้
+
+    // รูปแบบ DD-MM-YYYY หรือ DD/MM/YYYY
+    const formatPattern1 = /^(\d{1,2})[/-](\d{1,2})[/-](\d{4})$/;
+
+    // รูปแบบ DD MMM YYYY (เช่น 13 เม.ย. 2568)
+    const formatPattern2 = /^(\d{1,2})\s+[^\d]+\s+(\d{4})$/;
+
+    let day, month, year;
+
+    if (formatPattern1.test(dateStr)) {
+      const parts = dateStr.split(/[/-]/);
+      day = parts[0].padStart(2, '0');
+      month = parts[1].padStart(2, '0');
+      year = convertBuddhistToChristianYear(parts[2]);
+      return `${year}-${month}-${day}`;
+    }
+    else if (formatPattern2.test(dateStr)) {
+      // แปลงเดือนในรูปแบบข้อความภาษาไทย
+      const thaiMonths = {
+        'ม.ค.': '01', 'ก.พ.': '02', 'มี.ค.': '03', 'เม.ย.': '04',
+        'พ.ค.': '05', 'มิ.ย.': '06', 'ก.ค.': '07', 'ส.ค.': '08',
+        'ก.ย.': '09', 'ต.ค.': '10', 'พ.ย.': '11', 'ธ.ค.': '12'
+      };
+
+      const parts = dateStr.split(/\s+/);
+      day = parts[0].padStart(2, '0');
+
+      // ค้นหาเดือนในข้อความ
+      let monthText = parts[1];
+      month = '01'; // ค่าเริ่มต้น
+
+      // ค้นหาเดือนที่ตรงกับข้อความ
+      for (const [thaiMonth, monthNum] of Object.entries(thaiMonths)) {
+        if (monthText.includes(thaiMonth)) {
+          month = monthNum;
+          break;
+        }
+      }
+
+      year = convertBuddhistToChristianYear(parts[2]);
+      return `${year}-${month}-${day}`;
+    }
+    else {
+      // กรณีอื่นๆ ให้ส่งค่าเดิมกลับไป
+      return dateStr;
+    }
+  };
+
+  // ฟังก์ชันแปลงปี พ.ศ. เป็น ค.ศ.
+  const convertBuddhistToChristianYear = (yearStr: string): string => {
+    const year = parseInt(yearStr, 10);
+
+    // ตรวจสอบว่าเป็นปี พ.ศ. หรือไม่ (มากกว่า 2500)
+    if (year > 2500) {
+      return (year - 543).toString();
+    }
+
+    // ถ้าเป็นปี ค.ศ. อยู่แล้ว ส่งค่าเดิมกลับไป
+    return yearStr;
+  };
 
   const saveToDatabase = async (id: string) => {
     const imageData = imagesData.find((item) => item.id === id);
@@ -559,11 +558,10 @@ const convertBuddhistToChristianYear = (yearStr: string): string => {
             {categories.map((category) => (
               <TouchableOpacity
                 key={category}
-                className={`px-4 py-2 mr-2 rounded-full ${
-                  typeTransferMap[imageData.id] === category
+                className={`px-4 py-2 mr-2 rounded-full ${typeTransferMap[imageData.id] === category
                     ? "bg-blue-500"
                     : "bg-gray-300"
-                }`}
+                  }`}
                 onPress={() =>
                   setTypeTransferMap((prev) => ({
                     ...prev,
@@ -572,11 +570,10 @@ const convertBuddhistToChristianYear = (yearStr: string): string => {
                 }
               >
                 <Text
-                  className={`${
-                    typeTransferMap[imageData.id] === category
+                  className={`${typeTransferMap[imageData.id] === category
                       ? "text-white"
                       : "text-black"
-                  }`}
+                    }`}
                 >
                   {category}
                 </Text>

@@ -10,7 +10,7 @@ type SelectInputProps = {
     options: { label: string; value: string }[]; // เพิ่ม options
 };
 
-export const CustomSelect = ({
+const CustomSelect = ({
     className,
     label,
     value,
@@ -42,3 +42,5 @@ export const CustomSelect = ({
         </View>
     );
 };
+
+export default CustomSelect;
