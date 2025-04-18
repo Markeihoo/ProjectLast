@@ -11,19 +11,9 @@ import HeaderCustom from "@/app/components/header";
 import React, { useState, useCallback, useEffect } from "react";
 import { ButtonMain } from "../components/button";
 import { router } from "expo-router";
-import { useFocusEffect } from "@react-navigation/native";
 import axios from "axios";
 import { CustomInput } from "@/app/components/customInput";
-import {
-    ArrowLeft,
-    Plus,
-    DollarSign,
-    Calendar,
-    Clock,
-    Tag,
-    FileText,
-
-} from "lucide-react-native";
+import { ArrowLeft, Plus, DollarSign, Calendar, Clock, Tag, FileText, } from "lucide-react-native";
 dayjs.locale("th");
 dayjs.extend(buddhistEra);
 dayjs.extend(localizedFormat);
@@ -49,7 +39,6 @@ const categories = [
 ];
 export default function DetailScreen() {
     const [tranfers, setTranfers] = useState<any[]>([]);
-    const [isLoading, setIsLoading] = useState(false);
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [isModalVisibleDelete, setIsModalVisibleDelete] = useState(false);
     const [selectedTranfer, setSelectedTranfer] = useState<any>(null);
@@ -161,6 +150,10 @@ export default function DetailScreen() {
             <ScrollView contentContainerStyle={{ paddingHorizontal: 16, paddingBottom: 30 }}>
                 {loading ? (
                     <ActivityIndicator size="large" color="#0000ff" />
+                ) : data.length === 0 ? (
+                    <View className="items-center mt-10">
+                        <Text className="text-gray-500 text-base">ไม่มีข้อมูลรายจ่ายเดือนนี้</Text>
+                    </View>
                 ) : (
                     data.map((item: any) => (
                         <ItemCardMain
@@ -280,7 +273,7 @@ export default function DetailScreen() {
                         <View style={{ flexDirection: "row", marginTop: 16 }} className="gap-2 justify-end w-full">
                             <ButtonMain
                                 title="ยกเลิก"
-                                btnColor="danger"
+                                btnColor="secondary"
                                 className="w-20"
                                 onPress={() => closeModal()}
                             />

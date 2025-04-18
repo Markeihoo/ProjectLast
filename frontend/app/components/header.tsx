@@ -1,14 +1,17 @@
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import { router } from "expo-router";
 import { ArrowBigLeft, ArrowLeft, House, Plus } from "lucide-react-native";
+import { useRouter, usePathname } from "expo-router";
 
 interface Props {
     title: string;
 }
 
 export default function HeaderCustom({ title }: Props) {
+    const pathname = usePathname();
+
     const backtoHome = () => {
-        router.push('/');
+        router.push('/home');
     };
     const backtonew = () => {
         router.push('/new');
@@ -23,9 +26,12 @@ export default function HeaderCustom({ title }: Props) {
                 <TouchableOpacity onPress={backtoHome}>
                     <House size={24} color="#fff" />
                 </TouchableOpacity>
-                <TouchableOpacity onPress={back}>
-                    <ArrowLeft size={24} color="#fff" style={{ marginLeft: 10 }} />
-                </TouchableOpacity>
+                {pathname !== "/" && (
+                    <TouchableOpacity onPress={back}>
+                        <ArrowLeft size={24} color="#fff" style={{ marginLeft: 10 }} />
+                    </TouchableOpacity>
+                )}
+
             </View>
             <Text style={styles.title} className="ml-[-10px]">{title}</Text>
 

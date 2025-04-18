@@ -1,23 +1,10 @@
 import { CustomInput } from "@/app/components/customInput";
 import {
-    View,
-    Text,
-    TouchableOpacity,
-    Alert,
-    StyleSheet,
-    ScrollView,
+    View, Text, TouchableOpacity, Alert, StyleSheet, ScrollView,
 } from "react-native";
 import React, { useState } from "react";
 import { router } from "expo-router";
-import {
-    ArrowLeft,
-    Plus,
-    DollarSign,
-    Calendar,
-    Clock,
-    Tag,
-    FileText,
-} from "lucide-react-native";
+import { ArrowLeft, Plus, DollarSign, Calendar, Clock, Tag, FileText, } from "lucide-react-native";
 import axios from "axios";
 import Constants from "expo-constants";
 import { ButtonMain } from "../components/button";

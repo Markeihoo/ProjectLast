@@ -1,28 +1,12 @@
 import React, { useState, useRef, useEffect } from "react";
-import {
-  View,
-  Button,
-  Image,
-  Alert,
-  Text,
-  StyleSheet,
-  ActivityIndicator,
-  ScrollView,
-  TouchableOpacity,
-  Dimensions,
-  FlatList,
-} from "react-native";
+import { View, Button, Image, Alert, Text, StyleSheet, ActivityIndicator, ScrollView, TouchableOpacity, Dimensions, FlatList, } from "react-native";
 import { ButtonMain } from "@/app/components/button";
 import * as ImagePicker from "expo-image-picker";
 import * as MediaLibrary from "expo-media-library";
 import axios from "axios";
-import { ArrowLeft, House } from "lucide-react-native";
 import { useRouter } from "expo-router";
-// นำเข้าฟังก์ชั่นจากฐานข้อมูล
-//import { initDatabase, saveTransaction, getAllTransactions } from '../../lib/database';
 import Constants from "expo-constants";
 import { CustomInput } from "@/app/components/customInput";
-import CustomSelect from "@/app/components/customSelect";
 import HeaderCustom from "@/app/components/header";
 
 interface TransactionInfo {
@@ -119,8 +103,6 @@ const App = () => {
         }));
 
         setImagesData((prev) => [...prev, ...newImagesData]);
-
-        // Analyze each new image
         newImagesData.forEach((imageData) => {
           if (imageData.base64 && imageData.mimeType) {
             analyzeImage(imageData.id, imageData.base64, imageData.mimeType);
@@ -134,7 +116,6 @@ const App = () => {
   };
 
   const analyzeImage = async (id: string, base64: string, mimeType: string) => {
-    // Update image status to analyzing
     setImagesData((prev) =>
       prev.map((item) =>
         item.id === id ? { ...item, isAnalyzing: true, error: null } : item
@@ -142,7 +123,6 @@ const App = () => {
     );
 
     try {
-      // ตัดสตริง base64 หากยาวเกินไป
       if (base64.length > 10000000) {
         setImagesData((prev) =>
           prev.map((item) =>
@@ -245,7 +225,7 @@ const App = () => {
         // ตัดข้อความที่ไม่ใช่ JSON ออก
         let jsonText = message.trim();
 
-        // ลองหา JSON ในข้อความ
+        // หา JSON ในข้อความ
         const jsonStart = jsonText.indexOf("{");
         const jsonEnd = jsonText.lastIndexOf("}");
 
@@ -310,17 +290,13 @@ const App = () => {
 
   const deleteImage = (id: string) => {
     setImagesData((prev) => prev.filter((item) => item.id !== id));
-
-    // Adjust current index if needed
     if (
       imagesData.length > 1 &&
       currentIndex === imagesData.findIndex((img) => img.id === id)
     ) {
-      // If we're deleting the last image, go to previous
       if (currentIndex === imagesData.length - 1) {
         setCurrentIndex(currentIndex - 1);
       }
-      // Otherwise index stays the same as next image will take this position
     }
   };
 
@@ -332,12 +308,9 @@ const App = () => {
       Alert.alert("ข้อผิดพลาด", "ไม่สามารถวิเคราะห์รูปภาพซ้ำได้");
     }
   };
-  // สร้างฟังก์ชัน format วันที่
-  // สร้างฟังก์ชัน format วันที่ และแปลงปี พ.ศ. เป็น ค.ศ.
+  //  format วันที่ และแปลงปี พ.ศ. เป็น ค.ศ.
   const formatDate = (dateStr: string | undefined): string => {
     if (!dateStr) return "";
-
-    // ตรวจสอบรูปแบบวันที่ที่เป็นไปได้
 
     // รูปแบบ DD-MM-YYYY หรือ DD/MM/YYYY
     const formatPattern1 = /^(\d{1,2})[/-](\d{1,2})[/-](\d{4})$/;
@@ -416,11 +389,11 @@ const App = () => {
           (imageData?.result.amount || "0")
             .replace(/[^0-9.]/g, '')
         ),
-        date: formatDate(imageData.result.date), // ใช้ฟังก์ชัน formatDate ตรงนี้
+        date: formatDate(imageData.result.date),
         time: imageData.result.time,
         slip_ref: imageData.result.reference_number,
         detail: detailMap[imageData.id] || "",
-        typeTranfer: typeTransferMap[imageData.id], // แก้ไขตรงนี้
+        typeTranfer: typeTransferMap[imageData.id],
       });
       deleteImage(id);
       Alert.alert("บันทึกสําเร็จ", "ข้อมูลถูกบันทึกแล้ว");
@@ -559,8 +532,8 @@ const App = () => {
               <TouchableOpacity
                 key={category}
                 className={`px-4 py-2 mr-2 rounded-full ${typeTransferMap[imageData.id] === category
-                    ? "bg-blue-500"
-                    : "bg-gray-300"
+                  ? "bg-blue-500"
+                  : "bg-gray-300"
                   }`}
                 onPress={() =>
                   setTypeTransferMap((prev) => ({
@@ -571,8 +544,8 @@ const App = () => {
               >
                 <Text
                   className={`${typeTransferMap[imageData.id] === category
-                      ? "text-white"
-                      : "text-black"
+                    ? "text-white"
+                    : "text-black"
                     }`}
                 >
                   {category}

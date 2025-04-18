@@ -9,16 +9,7 @@ import { useFocusEffect } from "@react-navigation/native";
 import axios from "axios";
 import Constants from "expo-constants";
 import { CustomInput } from "@/app/components/customInput";
-import {
-    ArrowLeft,
-    Plus,
-    DollarSign,
-    Calendar,
-    Clock,
-    Tag,
-    FileText,
-
-} from "lucide-react-native";
+import { ArrowLeft, Plus, DollarSign, Calendar, Clock, Tag, FileText, } from "lucide-react-native";
 const API_BACKEND = Constants.expoConfig?.extra?.API_BACKEND;
 
 export default function GetAll() {
@@ -37,8 +28,6 @@ export default function GetAll() {
         { name: "ค่าน้ำค่าไฟ", icon: "💡", color: "#007AFF" },
         { name: "อื่นๆ", icon: "📋", color: "#8E8E93" },
     ];
-    const [typeTranfer, setTypeTranfer] = useState("อื่นๆ");
-
     const fetchData = async () => {
         try {
             setIsLoading(true);
@@ -138,7 +127,7 @@ export default function GetAll() {
                     <Text className="font-bold mt-2">กำลังโหลดข้อมูล...</Text>
                 </View>
             ) : (
-                <>
+                <View className="flex-1 p-2">
                     <ButtonMain
                         title="เพิ่มรายการใหม่"
                         btnSize="full"
@@ -161,7 +150,7 @@ export default function GetAll() {
                             />
                         ))}
                     </ScrollView>
-                </>
+                </View>
             )}
 
             <PaginationCustom
@@ -272,7 +261,7 @@ export default function GetAll() {
                         <View style={{ flexDirection: "row", marginTop: 16 }} className="gap-2 justify-end w-full">
                             <ButtonMain
                                 title="ยกเลิก"
-                                btnColor="danger"
+                                btnColor="secondary"
                                 className="w-20"
                                 onPress={() => closeModal()}
                             />
