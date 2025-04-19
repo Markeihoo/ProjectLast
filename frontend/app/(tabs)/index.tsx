@@ -157,7 +157,7 @@ export default function ExpenseReportScreen() {
                 <ChevronLeft size={24} color="#4a86e8" />
               </TouchableOpacity>
               <View className="flex-row items-center">
-                <Calendar size={18} color="#4a86e8" className="mr-2" />
+                {/* <Calendar size={18} color="#4a86e8" className="mr-2" /> */}
                 <Text className="text-lg font-semibold pl-2 text-gray-800">
                   {currentMonth.format("MMMM YYYY")}
                 </Text>
