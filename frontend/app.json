@@ -9,13 +9,40 @@
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.kanun.frontend",
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false,
+        "UIAppFonts": [
+  "AntDesign.ttf",
+  "Entypo.ttf",
+  "EvilIcons.ttf",
+  "Feather.ttf",
+  "FontAwesome.ttf",
+  "FontAwesome5_Brands.ttf",
+  "FontAwesome5_Regular.ttf",
+  "FontAwesome5_Solid.ttf",
+  "FontAwesome6_Brands.ttf",
+  "FontAwesome6_Regular.ttf",
+  "FontAwesome6_Solid.ttf",
+  "Fontisto.ttf",
+  "Foundation.ttf",
+  "Ionicons.ttf",
+  "MaterialCommunityIcons.ttf",
+  "MaterialIcons.ttf",
+  "Octicons.ttf",
+  "SimpleLineIcons.ttf",
+  "Zocial.ttf"
+]
+
+      }
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.kanun.frontend"
     },
     "web": {
       "bundler": "metro",
@@ -39,7 +66,13 @@
     },
     "extra": {
       "API_KEY": "AIzaSyB0rSCE1gEMapd45CmR2s8zzvRocypZQ2I",
-      "API_BACKEND": "https://sour-dancers-hunt.loca.lt/api"
+      "API_BACKEND": "https://backend-mobile-production-4afb.up.railway.app/api",
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "0b74fac3-b407-4701-a12a-dd5a5315051b"
+      }
     }
   }
 }
